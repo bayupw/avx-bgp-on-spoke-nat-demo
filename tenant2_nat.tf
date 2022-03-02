@@ -25,7 +25,7 @@ resource "aviatrix_gateway_snat" "aws_tenant_2_snatgw" {
     mark       = "10210"
     snat_ips   = module.aws_tenant_2.spoke_gateway.private_ip
   }
-  depends_on = [module.aws_tenant_2, module.tenant_2_onprem]
+  depends_on = [module.aws_tenant_2, module.tenant_2_onprem_vpc]
 }
 
 # On-Prem to Shared Services HA SNAT
@@ -51,7 +51,7 @@ resource "aviatrix_gateway_snat" "aws_tenant_2_snathagw" {
     mark       = "10210"
     snat_ips   = module.aws_tenant_2.spoke_gateway.ha_private_ip
   }
-  depends_on = [module.aws_tenant_2, module.tenant_2_onprem, aviatrix_gateway_snat.aws_tenant_2_snatgw]
+  depends_on = [module.aws_tenant_2, module.tenant_2_onprem_vpc, aviatrix_gateway_snat.aws_tenant_2_snatgw]
 }
 
 # Cloud to On-Prem DNAT
@@ -66,8 +66,8 @@ resource "aviatrix_gateway_dnat" "aws_tenant_2_dnatgw" {
     dst_cidr   = var.tenant_2_virtual_host # Virtual CIDR Host /32
     protocol   = "all"
     connection = module.aws_transit_1.transit_gateway.gw_name
-    mark       = "10210"                                      # Virtual Host 101.10
-    dnat_ips   = module.tenant_2_onprem_private_vm.private_ip # Real Host IP
+    mark       = "10210"                                  # Virtual Host 101.10
+    dnat_ips   = aws_instance.tenant2_instance.private_ip # Real Host IP
   }
-  depends_on = [module.aws_tenant_2, module.tenant_2_onprem]
+  depends_on = [module.aws_tenant_2, module.tenant_2_onprem_vpc]
 }

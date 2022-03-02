@@ -30,14 +30,16 @@ module "aws_tenant_1" {
 
 # Tenant 1 On-Prem VPC
 module "tenant_1_onprem_vpc" {
-  source          = "terraform-aws-modules/vpc/aws"
-  version         = "~> 3.0"
-  name            = "Tenant1-On-Prem"
-  cidr            = var.tenant_cidr
-  azs             = ["${var.aws_region}a"]
-  public_subnets  = [cidrsubnet(var.tenant_cidr, 4, 1)] # "192.168.200.16/28"
-  private_subnets = [cidrsubnet(var.tenant_cidr, 4, 0)] # "192.168.200.0/28"
-  enable_ipv6     = false
+  source               = "terraform-aws-modules/vpc/aws"
+  version              = "~> 3.0"
+  name                 = "Tenant1-On-Prem"
+  cidr                 = var.tenant_cidr
+  azs                  = ["${var.aws_region}a"]
+  public_subnets       = [cidrsubnet(var.tenant_cidr, 4, 1)] # "192.168.200.16/28"
+  private_subnets      = [cidrsubnet(var.tenant_cidr, 4, 0)] # "192.168.200.0/28"
+  enable_ipv6          = false
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 }
 
 # Tenant1 On-Prem CSR
@@ -69,7 +71,7 @@ resource "aws_security_group" "tenant1_instance_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16"]
+    cidr_blocks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
   }
   egress {
     from_port   = 0
@@ -82,12 +84,64 @@ resource "aws_security_group" "tenant1_instance_sg" {
   }
 }
 
+resource "aws_route" "private_route_to_csr" {
+  route_table_id         = module.tenant_1_onprem_vpc.private_route_table_ids[0]
+  destination_cidr_block = "10.0.0.0/8"
+  network_interface_id   = module.tenant_1_onprem_csr.CSR_Private_ENI[0].id
+  depends_on             = [module.tenant_1_onprem_csr]
+}
+
+# SSM Tenant1
+resource "aws_security_group" "tenant1_endpoint_sg" {
+  name        = "ssm-tenant1-endpoints-sg"
+  description = "Allow TLS inbound traffic for SSM/EC2 endpoints"
+  vpc_id      = module.tenant_1_onprem_vpc.vpc_id
+
+  ingress {
+    description = "TLS from VPC"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [module.tenant_1_onprem_vpc.vpc_cidr_block]
+  }
+  tags = {
+    Name = "sg-ssm-tenant1-endpoints"
+  }
+}
+
+resource "aws_vpc_endpoint" "tenant1_ssm_endpoint" {
+  vpc_id              = module.tenant_1_onprem_vpc.vpc_id
+  service_name        = "com.amazonaws.${var.aws_region}.ssm"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [module.tenant_1_onprem_vpc.private_subnets[0]]
+  security_group_ids  = [aws_security_group.tenant1_endpoint_sg.id]
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "tenant1_ssm_messages_endpoint" {
+  vpc_id              = module.tenant_1_onprem_vpc.vpc_id
+  service_name        = "com.amazonaws.${var.aws_region}.ssmmessages"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [module.tenant_1_onprem_vpc.private_subnets[0]]
+  security_group_ids  = [aws_security_group.tenant1_endpoint_sg.id]
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "tenant1_ec2_messages_endpoint" {
+  vpc_id              = module.tenant_1_onprem_vpc.vpc_id
+  service_name        = "com.amazonaws.${var.aws_region}.ec2messages"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = [module.tenant_1_onprem_vpc.private_subnets[0]]
+  security_group_ids  = [aws_security_group.tenant1_endpoint_sg.id]
+  private_dns_enabled = true
+}
+
 resource "aws_instance" "tenant1_instance" {
   ami                         = data.aws_ami.amazon_linux_2.id
   subnet_id                   = module.tenant_1_onprem_vpc.private_subnets[0]
   instance_type               = "t2.micro"
   vpc_security_group_ids      = [aws_security_group.tenant1_instance_sg.id]
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   key_name                    = var.existing_key_name == null ? "${random_string.key_random_id.id}_key_pair" : var.existing_key_name
   iam_instance_profile        = var.existing_ssm_instance_profile == null && var.create_ssm_profile ? aws_iam_instance_profile.ssm_instance_profile[0].name : var.existing_ssm_instance_profile
 
@@ -102,4 +156,6 @@ EOF
     Name = "tenant1-instance"
   }
   #user_data = file("install-nginx.sh")
+
+  depends_on = [aws_vpc_endpoint.tenant1_ssm_endpoint, aws_vpc_endpoint.tenant1_ssm_messages_endpoint, aws_vpc_endpoint.tenant1_ec2_messages_endpoint]
 }
