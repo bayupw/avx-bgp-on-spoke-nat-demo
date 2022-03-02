@@ -1,14 +1,14 @@
-# Aviatrix BGP on Spoke Tenant Overlap Demo
+# Aviatrix BGP on Spoke NAT  Demo
 
-This repository provides a Terraform implementation that demonstrate BGP on Spoke with overlapping CIDR across two tenants.
+This repository provides a Terraform implementation that demonstrate BGP on Spoke with NAT on AWS.
 
 The code provided is for demo purposes only.
 
-![Aviatrix BGP on Spoke Tenant Overlap Demo Topology](images/avx-bgp-on-spoke-tenant-overlap-demo.png "Aviatrix BGP on Spoke Tenant Overlap Demo Topology")
+![Aviatrix BGP on Spoke Tenant NAT Demo Topology](images/avx-bgp-on-spoke-nat-demo.png "Aviatrix BGP on Spoke Tenant Overlap Demo Topology")
 
-![Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology](images/avx-bgp-on-spoke-tenant-overlap-demo-copilot.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology")
+![Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology](images/avx-bgp-on-spoke-nat-demo-copilot.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology")
 
-![Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation](images/avx-bgp-on-spoke-tenant-overlap-demo-copilot-segmentation.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation")
+![Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation](images/avx-bgp-on-spoke-nat-demo-segmentation.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation")
 
 ## Prerequisites
 
@@ -32,13 +32,13 @@ TF_VAR_aws_account | AWS Aviatrix Account
 Clone the project
 
 ```bash
-git clone https://github.com/bayupw/avx-bgp-on-spoke-tenant-overlap-demo
+git clone https://github.com/bayupw/avx-bgp-on-spoke-nat-demo
 ```
 
 Go to the project directory
 
 ```bash
-cd avx-bgp-on-spoke-tenant-overlap-demo
+cd avx-bgp-on-spoke-nat-demo
 ```
 
 Set environment variables
