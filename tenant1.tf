@@ -52,7 +52,6 @@ module "tenant_1_onprem_csr" {
   public_conns       = ["${module.aws_tenant_1.spoke_gateway.gw_name}:${module.aws_tenant_1.spoke_gateway.local_as_number}:1"]
   csr_bgp_as_num     = "65011"
   create_client      = false
-  key_name           = var.existing_key_name == null ? "${random_string.key_random_id[0].id}_key_pair" : var.existing_key_name
   depends_on         = [module.aws_tenant_1, module.tenant_1_onprem_vpc]
 }
 
@@ -88,8 +87,8 @@ resource "aws_instance" "tenant1_instance" {
   subnet_id                   = module.tenant_1_onprem_vpc.private_subnets[0]
   instance_type               = "t2.micro"
   vpc_security_group_ids      = [aws_security_group.tenant1_instance_sg.id]
-  associate_public_ip_address = false
-  key_name                    = var.existing_key_name == null ? "${random_string.key_random_id[0].id}_key_pair" : var.existing_key_name
+  associate_public_ip_address = true
+  key_name                    = var.existing_key_name == null ? "${random_string.key_random_id.id}_key_pair" : var.existing_key_name
   iam_instance_profile        = var.existing_ssm_instance_profile == null && var.create_ssm_profile ? aws_iam_instance_profile.ssm_instance_profile[0].name : var.existing_ssm_instance_profile
 
   user_data = <<EOF
