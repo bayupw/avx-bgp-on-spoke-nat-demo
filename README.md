@@ -8,7 +8,7 @@ The code provided is for demo purposes only.
 
 ![Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology](images/avx-bgp-on-spoke-nat-demo-copilot.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology")
 
-![Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation](images/avx-bgp-on-spoke-nat-demo-segmentation.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation")
+![Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation](images/avx-bgp-on-spoke-nat-demo-copilot-segmentation.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation")
 
 ## Prerequisites
 
