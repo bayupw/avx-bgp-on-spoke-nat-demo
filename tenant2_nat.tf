@@ -21,7 +21,7 @@ resource "aviatrix_gateway_snat" "aws_tenant_2_snatgw" {
   }
   snat_policy {
     protocol   = "all"
-    connection = "Tenant2-On-Prem_to_Landing-Tenant2-Spoke-1@site2cloud"
+    connection = "Tenant2-Router_to_Landing-Tenant2-Spoke-1@site2cloud"
     mark       = "10210"
     snat_ips   = module.aws_tenant_2.spoke_gateway.private_ip
   }
@@ -47,7 +47,7 @@ resource "aviatrix_gateway_snat" "aws_tenant_2_snathagw" {
   }
   snat_policy {
     protocol   = "all"
-    connection = "Tenant2-On-Prem_to_Landing-Tenant2-Spoke-1@site2cloud"
+    connection = "Tenant2-Router_to_Landing-Tenant2-Spoke-1@site2cloud"
     mark       = "10210"
     snat_ips   = module.aws_tenant_2.spoke_gateway.ha_private_ip
   }
