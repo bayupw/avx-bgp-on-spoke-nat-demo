@@ -66,7 +66,7 @@ module "tenant_2_onprem_csr" {
 resource "aws_security_group" "tenant2_instance_sg" {
   name        = "tenant2/sg-instance"
   description = "Allow all traffic from VPCs inbound and all outbound"
-  vpc_id      = module.tenant_1_onprem_vpc.vpc_id
+  vpc_id      = module.tenant_2_onprem_vpc.vpc_id
 
   ingress {
     from_port   = 0
