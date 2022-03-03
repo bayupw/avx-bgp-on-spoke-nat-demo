@@ -4,9 +4,9 @@ This repository provides a Terraform implementation that demonstrate BGP on Spok
 
 The code provided is for demo purposes only.
 
-![Aviatrix BGP on Spoke Tenant NAT Demo Topology](images/avx-bgp-on-spoke-nat-demo.png "Aviatrix BGP on Spoke Tenant Overlap Demo Topology")
+![Aviatrix BGP on Spoke Tenant NAT Demo Topology](images/avx-bgp-on-spoke-nat-demo-topology.png "Aviatrix BGP on Spoke Tenant Overlap Demo Topology")
 
-![Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology](images/avx-bgp-on-spoke-nat-demo-copilot.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology")
+![Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology](images/avx-bgp-on-spoke-nat-demo-copilot-topology.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Topology")
 
 ![Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation](images/avx-bgp-on-spoke-nat-demo-copilot-segmentation.png "Aviatrix BGP on Spoke Tenant Overlap CoPilot Segmentation")
 
